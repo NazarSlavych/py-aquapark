@@ -30,9 +30,14 @@ class Visitor:
 
 
 class SlideLimitationValidator(ABC):
-    age = IntegerRange(0, 100)  # Placeholder, subclasses should override
-    weight = IntegerRange(0, 200)  # Placeholder, subclasses should override
-    height = IntegerRange(0, 300)  # Placeholder, subclasses should override
+    age = IntegerRange(0, 100)
+    weight = IntegerRange(0, 200)
+    height = IntegerRange(0, 300)
+
+    def __init__(self, age: int, weight: int, height: int) -> None:
+        self.age = age
+        self.weight = weight
+        self.height = height
 
 
 class ChildrenSlideLimitationValidator(SlideLimitationValidator):
@@ -40,11 +45,17 @@ class ChildrenSlideLimitationValidator(SlideLimitationValidator):
     weight = IntegerRange(20, 50)
     height = IntegerRange(80, 120)
 
+    def __init__(self, age: int, weight: int, height: int) -> None:
+        super().__init__(age, weight, height)
+
 
 class AdultSlideLimitationValidator(SlideLimitationValidator):
     age = IntegerRange(14, 60)
     weight = IntegerRange(50, 120)
     height = IntegerRange(120, 220)
+
+    def __init__(self, age: int, weight: int, height: int) -> None:
+        super().__init__(age, weight, height)
 
 
 class Slide:
@@ -54,10 +65,13 @@ class Slide:
 
     def can_access(self, visitor: Visitor) -> bool:
         try:
-            validator = self.limitation_class()
-            validator.age = visitor.age
-            validator.weight = visitor.weight
-            validator.height = visitor.height
+
+            validator = self.limitation_class(
+                visitor.age, visitor.weight, visitor.height
+            )
+            _ = validator.age
+            _ = validator.weight
+            _ = validator.height
             return True
         except (TypeError, ValueError):
             return False
